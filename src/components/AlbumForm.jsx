@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import ErrorModal from './ErrorModal';
 
 function AlbumForm(props) {
     // album name
@@ -49,17 +50,23 @@ function AlbumForm(props) {
             enteredGenres.length === 0 ||
             enteredLabel.trim() === ''
         ) {
-            setError('Please fill out all required fields.');
+            setError({
+                title: 'Missing fields',
+                message: 'Please fill out all required fields.'
+            });
             return;
         }
         
         // check for missing format selection if owned is true
         if (enteredOwned && enteredFormat.length === 0) {
-            setError('Please select at least one format for an owned album.');
+            setError({
+                title: 'No format',
+                message: 'Please select at least one format for an owned album.'
+            });
             return;
         }
 
-        setError('');
+        setError(null);
 
         const albumData = {
             name: enteredName,
@@ -83,127 +90,134 @@ function AlbumForm(props) {
     };
 
     return (
-        <form className="card" onSubmit={submitHandler}>
-            <div className="form-control">
-                <label>Name:</label>
-
-                <input
-                    type="text"
-                    value={enteredName}
-                    onChange={(e) => setEnteredName(e.target.value)}
+        <>
+            {error && (
+                <ErrorModal 
+                    title={error.title}
+                    message={error.message}
+                    onConfirm={() => setError(null)}
                 />
-            </div>
-
-
-            <div className="form-control">
-                <label>Artist:</label>
-
-                <input
-                    type="text"
-                    value={enteredArtist}
-                    onChange={(e) => setEnteredArtist(e.target.value)}
-                />
-            </div>
-
-            <div className="form-control">
-                <label>Release Date:</label>   
-
-                <input
-                    type="date"
-                    value={enteredDate}
-                    onChange={(e) => setEnteredDate(e.target.value)}
-                />
-            </div>
-
-            <div className="form-control">
-                <label>Genres:</label>
-
-                {/* I researched a bit on how checkboxes work, as the last time
-                I used them was in C#*/}
-                {genres.map((genre) => (
-                    <label key={genre}>
-                        <input
-                            type="checkbox"
-                            value={genre}
-                            checked={enteredGenres.includes(genre)}
-                            onChange={(e) => {
-                                if (e.target.checked) {
-                                    setEnteredGenres([...enteredGenres, genre]);
-                                } else {
-                                    setEnteredGenres(
-                                        enteredGenres.filter((g) => g !== genre)
-                                    );
-                                }
-                            }}  
-                        />
-                        {genre}
-                    </label>
-                ))}
-            </div>
-
-
-            <div className="form-control">
-                <label>Record Label:</label>  
-
-                <input
-                    type="text"
-                    value={enteredLabel}
-                    onChange={(e) => setEnteredLabel(e.target.value)}
-                />              
-            </div>
-
-
-            <div className="form-control">
-                <label>Owned:</label>
-
-                <label>
-                    <input type="radio" name="owned" value="yes" checked={enteredOwned === true}
-                        onChange={(e) => setEnteredOwned(true)}  
-                    />
-                    Yes 
-                </label>   
-
-                <label>
-                    <input type="radio" name="owned" value="no" checked={enteredOwned === false}
-                        onChange={(e) => {
-                            setEnteredOwned(false);
-                            setEnteredFormat([]);
-                        }}  
-                    />
-                    No   
-                </label>    
-            </div>
-
-            {enteredOwned && (
+            )}
+            <form className="card" onSubmit={submitHandler}>
                 <div className="form-control">
-                    <label>Format:</label>
-                    
-                    {mediaFormats.map((format) => (
-                        <label key={format}>
+                    <label>Name:</label>
+
+                    <input
+                        type="text"
+                        value={enteredName}
+                        onChange={(e) => setEnteredName(e.target.value)}
+                    />
+                </div>
+
+
+                <div className="form-control">
+                    <label>Artist:</label>
+
+                    <input
+                        type="text"
+                        value={enteredArtist}
+                        onChange={(e) => setEnteredArtist(e.target.value)}
+                    />
+                </div>
+
+                <div className="form-control">
+                    <label>Release Date:</label>   
+
+                    <input
+                        type="date"
+                        value={enteredDate}
+                        onChange={(e) => setEnteredDate(e.target.value)}
+                    />
+                </div>
+
+                <div className="form-control">
+                    <label>Genres:</label>
+
+                    {/* I researched a bit on how checkboxes work, as the last time
+                    I used them was in C#*/}
+                    {genres.map((genre) => (
+                        <label key={genre}>
                             <input
                                 type="checkbox"
-                                value={format}
-                                checked={enteredFormat.includes(format)}
+                                value={genre}
+                                checked={enteredGenres.includes(genre)}
                                 onChange={(e) => {
                                     if (e.target.checked) {
-                                        setEnteredFormat([...enteredFormat, format]);
+                                        setEnteredGenres([...enteredGenres, genre]);
                                     } else {
-                                        setEnteredFormat(
-                                            enteredFormat.filter((m) => m !== format)
+                                        setEnteredGenres(
+                                            enteredGenres.filter((g) => g !== genre)
                                         );
                                     }
-                                }}
+                                }}  
                             />
-                            {format}
+                            {genre}
                         </label>
-                    ))}           
+                    ))}
                 </div>
-            )}
 
-            {error && <p className="form-error">{error}</p>}
 
-            <button type="submit">Add Album</button>
-        </form>
+                <div className="form-control">
+                    <label>Record Label:</label>  
+
+                    <input
+                        type="text"
+                        value={enteredLabel}
+                        onChange={(e) => setEnteredLabel(e.target.value)}
+                    />              
+                </div>
+
+
+                <div className="form-control">
+                    <label>Owned:</label>
+
+                    <label>
+                        <input type="radio" name="owned" value="yes" checked={enteredOwned === true}
+                            onChange={(e) => setEnteredOwned(true)}  
+                        />
+                        Yes 
+                    </label>   
+
+                    <label>
+                        <input type="radio" name="owned" value="no" checked={enteredOwned === false}
+                            onChange={(e) => {
+                                setEnteredOwned(false);
+                                setEnteredFormat([]);
+                            }}  
+                        />
+                        No   
+                    </label>    
+                </div>
+
+                {enteredOwned && (
+                    <div className="form-control">
+                        <label>Format:</label>
+                        
+                        {mediaFormats.map((format) => (
+                            <label key={format}>
+                                <input
+                                    type="checkbox"
+                                    value={format}
+                                    checked={enteredFormat.includes(format)}
+                                    onChange={(e) => {
+                                        if (e.target.checked) {
+                                            setEnteredFormat([...enteredFormat, format]);
+                                        } else {
+                                            setEnteredFormat(
+                                                enteredFormat.filter((m) => m !== format)
+                                            );
+                                        }
+                                    }}
+                                />
+                                {format}
+                            </label>
+                        ))}           
+                    </div>
+                )}
+
+                <button type="submit">Add Album</button>
+            </form>
+        </>
     );
 }
 
