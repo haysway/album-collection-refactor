@@ -1,5 +1,6 @@
 function AlbumCard(props) {
     return(
+        // this div stays because it had actions and classes?
         <div className="card album-card"
         onClick={() => props.onDelete(props.id)}
         >

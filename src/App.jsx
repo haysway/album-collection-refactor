@@ -242,7 +242,7 @@ function App() {
   };
 
   return (
-    <div>
+    <>
       <h1>Album Collection</h1>
 
       <NewAlbum onAddAlbum={addAlbumHandler}/>
@@ -261,8 +261,7 @@ function App() {
         onDeleteAlbum={deleteAlbumHandler}
         onFavoriteAlbum={favoriteAlbumHandler}
       />
-
-    </div>
+    </>
   )
 }
 

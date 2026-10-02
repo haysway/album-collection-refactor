@@ -11,9 +11,9 @@ function NewAlbum(props) {
     };
 
     return (
-        <div>
+        <>
             <AlbumForm onAddAlbum={saveAlbumHandler}/>
-        </div>
+        </>
     );
 }
 
