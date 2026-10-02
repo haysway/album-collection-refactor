@@ -1,0 +1,147 @@
+/* ChatGPT generated the styling, as I like things to look nice but dont like fiddling (Sept 2026)*/
+/* Main app */
+
+#root {
+  padding: 2rem;
+}
+
+
+/* Headings */
+
+h1 {
+  margin: 0 0 2rem;
+  text-align: center;
+  color: var(--dusty-rose);
+}
+
+
+/* Form */
+
+.card {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1.5rem;
+
+  background-color: var(--dark-slate-grey);
+  border: 1px solid var(--dusty-taupe);
+  border-radius: 8px;
+}
+
+.form-control {
+  margin-bottom: 0.5rem;
+}
+
+label {
+  display: block;
+}
+
+.form-control label {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 15px;
+}
+
+/* Album cards */
+
+.album-card {
+  max-width: 700px;
+  margin: 1rem auto;
+  padding: 1rem 1.5rem;
+
+  background-color: var(--dark-slate-grey-2);
+  border: 1px solid var(--dim-grey);
+  border-left: 5px solid var(--dusty-rose);
+  border-radius: 5px;
+
+  text-align: left;
+}
+
+.album-card h3 {
+  margin: 0 0 0.75rem;
+  color: var(--dusty-rose);
+}
+
+.album-card p {
+  margin: 0.25rem 0;
+}
+
+/* Album filters */
+
+.album-filter {
+  margin-bottom: 1rem;
+}
+
+.album-filter label {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.album-filter input[type="text"],
+.album-filter select {
+  margin-left: 0.4rem;
+  padding: 0.4rem;
+
+  background-color: var(--dark-slate-grey-2);
+  color: var(--dusty-taupe);
+
+  border: 1px solid var(--dusty-taupe);
+  border-radius: 4px;
+}
+
+/* Text and date inputs */
+
+input[type="text"],
+input[type="date"] {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.25rem;
+
+  background-color: var(--dark-slate-grey-2);
+  color: var(--dusty-taupe);
+
+  border: 1px solid var(--dusty-taupe);
+  border-radius: 4px;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus {
+  outline: 2px solid var(--dusty-rose);
+  border-color: var(--dusty-rose);
+}
+
+
+/* Checkboxes and radio buttons */
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--dusty-rose);
+  margin-right: 5px;
+}
+
+/* error */
+.form-error {
+  color: var(--dusty-rose);
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+/* Button */
+
+button {
+  padding: 0.6rem 1.2rem;
+
+  background-color: var(--dusty-rose);
+  color: var(--dark-slate-grey-2);
+
+  border: none;
+  border-radius: 5px;
+
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: var(--dusty-taupe);
+}

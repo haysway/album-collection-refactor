@@ -1,0 +1,31 @@
+/* I chose the color pallete, but ChatGPT generated the styling, as I like things to look nice but dont like fiddling (Sept 2026) */
+:root {
+  --dusty-rose: #be7768;
+  --dim-grey: #696c6a;
+  --dark-slate-grey: #365455;
+  --dark-slate-grey-2: #2c4c4a;
+  --dusty-taupe: #a7877b;
+
+  font-family: Arial, sans-serif;
+  color: var(--dusty-taupe);
+  background-color: var(--dark-slate-grey-2);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--dark-slate-grey-2);
+}
+
+#root {
+  min-height: 100vh;
+}
