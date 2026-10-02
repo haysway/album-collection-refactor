@@ -1,5 +1,63 @@
-import { useState } from 'react';
+import { useState, useReducer, useEffect } from 'react';
 import ErrorModal from './ErrorModal';
+
+const initialFormState = {
+    name: '',
+    artist: '',
+    date: '',
+    genres: [],
+    label: '',
+    owned: false,
+    formats: []
+}
+
+// this reducer is especially useful for the relationship between owned and formats,
+// but I consolidated the whole form into the reducer for simplicity
+function formReducer(state, action) {
+    switch (action.type) {
+        case 'SET_NAME':
+            return {
+                ...state,
+                name: action.value
+            };
+        case 'SET_ARTIST':
+            return {
+                ...state,
+                artist: action.value
+            };
+        case 'SET_DATE':
+            return {
+                ...state,
+                date: action.value
+            };
+        case 'SET_GENRES':
+            return {
+                ...state,
+                genres: action.value
+            };
+        case 'SET_LABEL':
+            return {
+                ...state,
+                label: action.value
+            };
+        case 'SET_OWNED':
+            return {
+                ...state,
+                owned: action.value,
+                formats: action.value ? state.formats : []
+            };
+        case 'SET_FORMATS':
+            return {
+                ...state,
+                formats: action.value
+            };
+        case 'RESET':
+            return initialFormState;
+        
+        default:
+            return state;
+    }
+}
 
 function AlbumForm(props) {
     // album name
@@ -10,16 +68,20 @@ function AlbumForm(props) {
     // owned selector (yes/no)
     // if yes, which format (vinyl, cd, cassette)
 
-    // I had to research to see if a list can be used here
-    const [enteredName, setEnteredName] = useState('');
-    const [enteredArtist, setEnteredArtist] = useState('');
-    const [enteredDate, setEnteredDate] = useState('');
-    const [enteredGenres, setEnteredGenres] = useState([]);
-    const [enteredLabel, setEnteredLabel] = useState('');
-    const [enteredOwned, setEnteredOwned] = useState(false);
-    const [enteredFormat, setEnteredFormat] = useState([]);
-
+    const [formState, dispatch] = useReducer(formReducer, initialFormState);
     const [error, setError] = useState('');
+
+    // local storage seemed interesting, and it is used in my capstone group project, so I researched it
+    // after 2 seconds of no changes, it writes the latest formState to localStorage
+    useEffect(() => {
+        const timerId = setTimeout(() => {
+            localStorage.setItem('albumForm', JSON.stringify(formState));
+        }, 2000);
+
+        return () => {
+            clearTimeout(timerId);
+        }
+    }, [formState]);
 
     const genres = [
         'Rock',
@@ -44,11 +106,11 @@ function AlbumForm(props) {
         
         // check for standard error
         if (
-            enteredName.trim() === '' ||
-            enteredArtist.trim() === '' ||
-            enteredDate === '' ||
-            enteredGenres.length === 0 ||
-            enteredLabel.trim() === ''
+            formState.name.trim() === '' ||
+            formState.artist.trim() === '' ||
+            formState.date === '' ||
+            formState.genres.length === 0 ||
+            formState.label.trim() === ''
         ) {
             setError({
                 title: 'Missing fields',
@@ -58,7 +120,7 @@ function AlbumForm(props) {
         }
         
         // check for missing format selection if owned is true
-        if (enteredOwned && enteredFormat.length === 0) {
+        if (formState.owned && formState.formats.length === 0) {
             setError({
                 title: 'No format',
                 message: 'Please select at least one format for an owned album.'
@@ -69,24 +131,18 @@ function AlbumForm(props) {
         setError(null);
 
         const albumData = {
-            name: enteredName,
-            artist: enteredArtist,
-            date: enteredDate,
-            genres: enteredGenres,
-            label: enteredLabel,
-            owned: enteredOwned,
-            formats: enteredFormat
+            name: formState.name,
+            artist: formState.artist,
+            date: formState.date,
+            genres: formState.genres,
+            label: formState.label,
+            owned: formState.owned,
+            formats: formState.formats
         };
 
         props.onAddAlbum(albumData);
 
-        setEnteredName('');
-        setEnteredArtist('');
-        setEnteredDate('');
-        setEnteredGenres([]);
-        setEnteredLabel('');
-        setEnteredOwned(false);
-        setEnteredFormat([]);
+        dispatch({ type: 'RESET' });
     };
 
     return (
@@ -104,8 +160,13 @@ function AlbumForm(props) {
 
                     <input
                         type="text"
-                        value={enteredName}
-                        onChange={(e) => setEnteredName(e.target.value)}
+                        value={formState.name}
+                        onChange={(e) => 
+                            dispatch({
+                                type: 'SET_NAME',
+                                value: e.target.value
+                            })
+                        }
                     />
                 </div>
 
@@ -115,8 +176,13 @@ function AlbumForm(props) {
 
                     <input
                         type="text"
-                        value={enteredArtist}
-                        onChange={(e) => setEnteredArtist(e.target.value)}
+                        value={formState.artist}
+                        onChange={(e) =>
+                            dispatch({
+                                type: 'SET_ARTIST',
+                                value: e.target.value
+                            })
+                        }
                     />
                 </div>
 
@@ -125,8 +191,13 @@ function AlbumForm(props) {
 
                     <input
                         type="date"
-                        value={enteredDate}
-                        onChange={(e) => setEnteredDate(e.target.value)}
+                        value={formState.date}
+                        onChange={(e) => 
+                            dispatch({
+                                type: 'SET_DATE',
+                                value: e.target.value
+                            })
+                        }
                     />
                 </div>
 
@@ -140,14 +211,18 @@ function AlbumForm(props) {
                             <input
                                 type="checkbox"
                                 value={genre}
-                                checked={enteredGenres.includes(genre)}
+                                checked={formState.genres.includes(genre)}
                                 onChange={(e) => {
                                     if (e.target.checked) {
-                                        setEnteredGenres([...enteredGenres, genre]);
+                                        dispatch({
+                                            type: 'SET_GENRES',
+                                            value: [...formState.genres, genre]
+                                        })
                                     } else {
-                                        setEnteredGenres(
-                                            enteredGenres.filter((g) => g !== genre)
-                                        );
+                                        dispatch({
+                                            type: 'SET_GENRES',
+                                            value: formState.genres.filter((g) => g !== genre)
+                                        })
                                     }
                                 }}  
                             />
@@ -162,8 +237,13 @@ function AlbumForm(props) {
 
                     <input
                         type="text"
-                        value={enteredLabel}
-                        onChange={(e) => setEnteredLabel(e.target.value)}
+                        value={formState.label}
+                        onChange={(e) =>
+                            dispatch({
+                                type: 'SET_LABEL',
+                                value: e.target.value
+                            })
+                        }
                     />              
                 </div>
 
@@ -172,24 +252,31 @@ function AlbumForm(props) {
                     <label>Owned:</label>
 
                     <label>
-                        <input type="radio" name="owned" value="yes" checked={enteredOwned === true}
-                            onChange={(e) => setEnteredOwned(true)}  
+                        <input type="radio" name="owned" value="yes" checked={formState.owned === true}
+                            onChange={() =>
+                                dispatch({
+                                    type: 'SET_OWNED',
+                                    value: true
+                                })
+                            }  
                         />
                         Yes 
                     </label>   
 
                     <label>
-                        <input type="radio" name="owned" value="no" checked={enteredOwned === false}
-                            onChange={(e) => {
-                                setEnteredOwned(false);
-                                setEnteredFormat([]);
-                            }}  
+                        <input type="radio" name="owned" value="no" checked={formState.owned === false}
+                            onChange={() =>
+                                dispatch({
+                                    type: 'SET_OWNED',
+                                    value: false
+                                })
+                            }  
                         />
                         No   
                     </label>    
                 </div>
 
-                {enteredOwned && (
+                {formState.owned && (
                     <div className="form-control">
                         <label>Format:</label>
                         
@@ -198,14 +285,18 @@ function AlbumForm(props) {
                                 <input
                                     type="checkbox"
                                     value={format}
-                                    checked={enteredFormat.includes(format)}
+                                    checked={formState.formats.includes(format)}
                                     onChange={(e) => {
                                         if (e.target.checked) {
-                                            setEnteredFormat([...enteredFormat, format]);
+                                            dispatch({
+                                                type: 'SET_FORMATS',
+                                                value: [...formState.formats, format]
+                                            });
                                         } else {
-                                            setEnteredFormat(
-                                                enteredFormat.filter((m) => m !== format)
-                                            );
+                                            dispatch({
+                                                type: 'SET_FORMATS',
+                                                value: formState.formats.filter((m) => m !== format)
+                                            });
                                         }
                                     }}
                                 />
